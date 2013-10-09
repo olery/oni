@@ -4,9 +4,8 @@ Gem::Specification.new do |gem|
   gem.name    = 'oni'
   gem.version = Oni::VERSION
   gem.authors = [
-    'Olery <info@olery.com>',
-    'Yorick Peterse <yorickpeterse@gmail.com>',
-    'Wilco van Duinkerken <wilcovanduinkerken@olery.com>'
+    'Yorick Peterse',
+    'Wilco van Duinkerken'
   ]
 
   gem.summary = 'Ruby framework for building concurrent job ' \
