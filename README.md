@@ -59,14 +59,6 @@ completion a custom (optional) action would be triggered to process the output.
 
 The daemon layer can be seen as the controller of an Oni application.
 
-### The Worker
-
-The worker would perform the actual work and return some kind of output to the
-daemon. Oni assumes that workers behave reasonably well, currently there's no
-mechanism in place to deal with memory leaks and the likes. Oni also assumes
-that developers are somewhat capable of dealing with asynchronous code since
-all work is performed asynchronously outside of the daemon layer.
-
 ### The Mapper
 
 The mapper is tasked with two things:
@@ -89,6 +81,14 @@ it around several layers deep into your codebase.
 
 In the above case the mapper would take care of validating/scrubbing the input
 and adding extra meta-data to the output.
+
+### The Worker
+
+The worker would perform the actual work and return some kind of output to the
+daemon. Oni assumes that workers behave reasonably well, currently there's no
+mechanism in place to deal with memory leaks and the likes. Oni also assumes
+that developers are somewhat capable of dealing with asynchronous code since
+all work is performed asynchronously outside of the daemon layer.
 
 ## Requirements
 
