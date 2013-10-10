@@ -104,39 +104,42 @@ Install the Gem:
 
 Basic usage of Oni is as following:
 
-    require 'oni'
 
-    class MyWorker < Oni::Worker
-      def process(number)
-        return number * 2
-      end
-    end
+```ruby
+require 'oni'
 
-    class MyMapper < Oni::Mapper
-      def map_input(input)
-        return input[:number]
-      end
+class MyWorker < Oni::Worker
+  def process(number)
+    return number * 2
+  end
+end
 
-      def map_output(output)
-        return {:number => output, :completed => Time.now}
-      end
-    end
+class MyMapper < Oni::Mapper
+  def map_input(input)
+    return input[:number]
+  end
 
-    class MyDaemon < Oni::Daemon
-      set :mapper, MyMapper
-      set :worker, MyWorker
+  def map_output(output)
+    return {:number => output, :completed => Time.now}
+  end
+end
 
-      # Here you'd receive your message, e.g. from a queue. We'll use static
-      # data as an example.
-      def receive
-        yield({:number => 10})
-      end
+class MyDaemon < Oni::Daemon
+  set :mapper, MyMapper
+  set :worker, MyWorker
 
-      # This would get executed upon completion of a job.
-      def complete(result)
-        puts result
-      end
-    end
+  # Here you'd receive your message, e.g. from a queue. We'll use static
+  # data as an example.
+  def receive
+    yield({:number => 10})
+  end
+
+  # This would get executed upon completion of a job.
+  def complete(result)
+    puts result
+  end
+end
+```
 
 [olery]: http://www.olery.com/
 [daemon-kit]: https://github.com/kennethkalmer/daemon-kit
