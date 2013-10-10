@@ -11,6 +11,7 @@ Gem::Specification.new do |gem|
   gem.summary     = 'Framework for building concurrent daemons in Ruby.'
   gem.description = gem.summary
   gem.has_rdoc    = 'yard'
+  gem.license     = 'MIT'
 
   gem.required_ruby_version = '>= 1.9.3'
 

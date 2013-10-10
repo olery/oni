@@ -6,6 +6,7 @@
   * [The Worker](#the-worker)
 * [Requirements](#requirements)
 * [Installation & Basic Usage](#installation--basic-usage)
+* [License](#license)
 
 Oni is a Ruby framework that aims to make it easier to write concurrent daemons
 using a common code structure. Oni itself does not actually daemonize your
@@ -147,6 +148,12 @@ class MyDaemon < Oni::Daemon
   end
 end
 ```
+
+## License
+
+The source code of this repository and Oni itself are licensed under the MIT
+license unless specified otherwise. A copy of this license can be found in the
+file "LICENSE" in the root directory of this repository.
 
 [olery]: http://www.olery.com/
 [daemon-kit]: https://github.com/kennethkalmer/daemon-kit
