@@ -1,5 +1,9 @@
 # README
 
+<a href="https://en.wikipedia.org/wiki/File:Oni_in_pilgrim%27s_clothing.jpg">
+  <img src="oni.jpg" alt="Oni">
+</a>
+
 * [Design](#design)
   * [The Daemon](#the-daemon)
   * [The Mapper](#the-mapper)
