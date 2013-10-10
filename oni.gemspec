@@ -8,9 +8,7 @@ Gem::Specification.new do |gem|
     'Wilco van Duinkerken'
   ]
 
-  gem.summary = 'Ruby framework for building concurrent job ' \
-    'processing applications.'
-
+  gem.summary     = 'Framework for building concurrent daemons in Ruby.'
   gem.description = gem.summary
   gem.has_rdoc    = 'yard'
 
