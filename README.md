@@ -1,5 +1,12 @@
 # README
 
+* [Design](#design)
+  * [The Daemon](#the-daemon)
+  * [The Mapper](#the-mapper)
+  * [The Worker](#the-worker)
+* [Requirements](#requirements)
+* [Installation & Basic Usage](#installation--basic-usage)
+
 Oni is a Ruby framework that aims to make it easier to write concurrent daemons
 using a common code structure. Oni itself does not actually daemonize your
 code, manage PID files, resources, etc. Instead you should use Oni in
