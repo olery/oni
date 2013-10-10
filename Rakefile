@@ -1,3 +1,5 @@
+require_relative 'lib/oni/version'
+
 require 'bundler/gem_tasks'
 require 'ci/reporter/rake/rspec'
 
