@@ -113,7 +113,7 @@ Install the Gem:
 Basic usage of Oni is as following:
 
 
-```ruby
+~~~
 require 'oni'
 
 class MyWorker < Oni::Worker
@@ -147,7 +147,7 @@ class MyDaemon < Oni::Daemon
     puts result
   end
 end
-```
+~~~
 
 ## License
 
