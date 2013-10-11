@@ -71,11 +71,15 @@ module Oni
     # Spawns a single thread.
     #
     def spawn_thread
-      return Thread.new do
+      thread = Thread.new do
         catch :terminate do
           loop { queue.pop.call }
         end
       end
+
+      thread.abort_on_exception = true
+
+      return thread
     end
   end # ThreadPool
 end # Oni
