@@ -77,7 +77,7 @@ module Oni
     def process(message)
       output = run_worker(message)
 
-      complete(output)
+      complete(message, output)
     end
 
     ##
@@ -108,9 +108,10 @@ module Oni
     ##
     # Called when a job has been completed, by default this method is a noop.
     #
-    # @param [Mixed] message
+    # @param [Mixed] message The raw input message (e.g. an AWS SQS message)
+    # @param [Mixed] output The output of the worker.
     #
-    def complete(message)
+    def complete(message, output)
     end
 
     ##

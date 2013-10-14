@@ -21,7 +21,7 @@ describe Oni::Daemon do
     end
 
     Class.new(Oni::Daemon) do
-      attr_reader :number, :number2, :result
+      attr_reader :number, :number2, :message, :output
 
       set :mapper, mapper
       set :worker, worker
@@ -39,8 +39,9 @@ describe Oni::Daemon do
         yield({:number => 10})
       end
 
-      def complete(message)
-        @result = message
+      def complete(message, output)
+        @message = message
+        @output  = output
       end
     end
   end
@@ -106,6 +107,7 @@ describe Oni::Daemon do
     instance.start
     instance.stop
 
-    instance.result.should == {:new_number => 20}
+    instance.message.should == {:number => 10}
+    instance.output.should  == {:new_number => 20}
   end
 end
