@@ -21,8 +21,7 @@ describe Oni::Daemon do
     end
 
     Class.new(Oni::Daemon) do
-      attr_reader :number
-      attr_reader :result
+      attr_reader :number, :number2, :result
 
       set :mapper, mapper
       set :worker, worker
@@ -30,6 +29,10 @@ describe Oni::Daemon do
 
       def after_initialize
         @number = 10
+      end
+
+      def before_start
+        @number2 = 20
       end
 
       def receive
@@ -44,6 +47,14 @@ describe Oni::Daemon do
 
   example 'call #after_initialize' do
     example_daemon.new.number.should == 10
+  end
+
+  example 'call #before_start' do
+    daemon = example_daemon.new
+    daemon.start
+    daemon.stop
+
+    daemon.number2.should == 20
   end
 
   example 'raise for the default receive method' do
