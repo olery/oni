@@ -12,8 +12,12 @@ module Oni
     #       set :queue_name, 'my_queue'
     #     end
     #
-    # The queue name is required, without you won't be able to create an
-    # instance of this class.
+    # The following options can be set:
+    #
+    # * `queue_name` (required): the name of the queue to poll as a String.
+    # * `poll_options`: a Hash of options to pass to the `poll` method of the
+    #   AWS SQS queue. See the documentation of `AWS::SQS::Queue#poll` for more
+    #   information on the available options.
     #
     class SQS < Daemon
       ##
@@ -24,20 +28,32 @@ module Oni
       end
 
       ##
-      # Polls an SQS queue and gives it back to the daemon.
+      # Polls an SQS queue for a message and processes it.
       #
       def receive
-        queue.poll do |message|
+        queue.poll(poll_options) do |message|
           yield message
         end
       end
 
       ##
+      # Returns a Hash containing the options to use for the `poll` method of
+      # the SQS queue.
+      #
+      # @return [Hash]
+      #
+      def poll_options
+        return option(:poll_options, {})
+      end
+
+      ##
+      # Returns the queue to use for the current thread.
+      #
       # @return [AWS::SQS::Queue]
       #
       #:nocov:
       def queue
-        return @queue ||= AWS::SQS.new.queues.named(option(:queue_name))
+        return AWS::SQS.new.queues.named(option(:queue_name))
       end
       #:nocov:
     end # SQS

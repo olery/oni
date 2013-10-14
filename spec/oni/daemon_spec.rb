@@ -26,6 +26,7 @@ describe Oni::Daemon do
 
       set :mapper, mapper
       set :worker, worker
+      set :threads, 2
 
       def after_initialize
         @number = 10
@@ -81,15 +82,16 @@ describe Oni::Daemon do
     instance = example_daemon.new
     instance.start
 
-    instance.pool.threads.length.should == instance.threads
+    instance.workers.length.should == instance.threads
 
     instance.stop
 
-    instance.pool.threads.length.should == 0
+    instance.workers.length.should == 0
   end
 
   example 'process a job' do
     instance = example_daemon.new
+
     instance.start
     instance.stop
 

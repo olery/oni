@@ -29,6 +29,10 @@ module GithubStatus
     # Check GitHub every 10 minutes.
     set :interval, 600
 
+    # Since this daemon does the same thing over and over we'll only run 1
+    # thread instead of multiple ones.
+    set :threads, 1
+
     # The URL to check.
     set :status_url, 'https://status.github.com/api/status.json'
 
@@ -51,5 +55,13 @@ module GithubStatus
 end # GithubStatus
 
 daemon = GithubStatus::Daemon.new
+
+%w{INT TERM}.each do |signal|
+  trap(signal) do
+    puts 'Shutting down...'
+
+    daemon.stop
+  end
+end
 
 daemon.start

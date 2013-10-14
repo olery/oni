@@ -27,9 +27,9 @@ kind of concurrency model in.
 
 Oni takes care of these problems by providing the following:
 
-* A concurrency model (currently a thread pool)
-* Clear separation of logic into 3 distinctive parts
-* A common structure for your daemon projects
+* A concurrency model in the form of separate worker threads (5 by default).
+* Clear separation of logic into 3 distinctive parts.
+* A common structure for your daemon projects.
 
 Oni assumes developers are somewhat familiar with threading and the potential
 issues that may arise, it also assumes that your code doesn't leak large
@@ -65,11 +65,21 @@ in detail below.
 
 ### The Daemon
 
-The daemon layer is tasked with receiving a message from an arbitrary location
-and scheduling this in the internal job queue (= a thread pool). Upon
-completion a custom (optional) action would be triggered to process the output.
+The daemon layer spawns a number of threads that will each receive and perform
+work separately. Typically these workers are long running tasks that poll some
+kind of message queue for jobs to process.
 
-The daemon layer can be seen as the controller of an Oni application.
+In initial iterations Oni used a main job dispatcher (running in the main
+thread) and a separate thread pool for the workers. This proved problematic
+with message queue setups as it would result in the main thread pulling in all
+available jobs and then internally queing them again given there weren't enough
+workers available. This would mean that if the process would crash the messages
+were lost. As a result of this each worker is started in it's own separate
+thread.
+
+Comparing Oni with other framework structures one could see the daemon layer as
+a controller (in MVC frameworks), it merely dispatches work to the mapper and
+worker instead of doing everything itself.
 
 ### The Mapper
 

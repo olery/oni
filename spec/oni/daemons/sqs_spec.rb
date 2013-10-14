@@ -17,7 +17,7 @@ describe Oni::Daemons::SQS do
 
     instance = example_daemon.new
     queue    = Class.new do
-      def poll
+      def poll(options = {})
         yield 10
       end
     end

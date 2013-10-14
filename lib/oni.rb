@@ -1,5 +1,4 @@
 require_relative 'oni/version'
-require_relative 'oni/thread_pool'
 require_relative 'oni/configurable'
 require_relative 'oni/initialize_arguments'
 require_relative 'oni/mapper'

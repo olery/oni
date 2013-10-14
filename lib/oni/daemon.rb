@@ -4,13 +4,16 @@ module Oni
   # it and dispatching it to a mapper and worker. In essence a Daemon instance
   # can be seen as a controller when compared with typical MVC frameworks.
   #
-  # @!attribute [r] pool
-  #  @return [Oni::ThreadPool]
+  # This daemon starts a number of threads (5 by default) that will each
+  # perform work on their own using the corresponding mapper and worker class.
+  #
+  # @!attribute [r] workers
+  #  @return [Array<Thread>]
   #
   class Daemon
     include Configurable
 
-    attr_reader :pool
+    attr_reader :workers
 
     ##
     # The default amount of threads to start.
@@ -24,32 +27,40 @@ module Oni
     # is defined.
     #
     def initialize
-      @pool = ThreadPool.new(threads)
+      @workers = []
 
       after_initialize if respond_to?(:after_initialize)
     end
 
     ##
-    # Starts the daemon. Depending on the behaviour of the `#receive` method
-    # calling {Oni::Daemon#start} might block execution.
+    # Starts the daemon and waits for all threads to finish execution. This
+    # method is blocking since it will wait for all threads to finish.
+    #
+    # If the current class has a `before_start` method defined it's called
+    # before starting the daemon.
     #
     def start
-      pool.start
+      before_start if respond_to?(:before_start)
 
-      receive do |message|
-        pool.schedule { process(message) }
+      threads.times do
+        workers << spawn_thread
       end
+
+      workers.each(&:join)
     end
 
     ##
-    # Stops the daemon.
+    # Terminates all the threads and clears up the list. Note that calling this
+    # method acts much like sending a SIGKILL signal to a process: threads will
+    # be shut down *immediately*.
     #
     def stop
-      pool.stop
+      workers.each(&:kill)
+      workers.clear
     end
 
     ##
-    # Returns the amount of threads to use for the tread pool.
+    # Returns the amount of threads to use.
     #
     # @return [Fixnum]
     #
@@ -120,6 +131,21 @@ module Oni
     #
     def mapper_arguments
       return {}
+    end
+
+    ##
+    # Spawns a new thread that waits for daemon input.
+    #
+    # @return [Thread]
+    #
+    def spawn_thread
+      thread = Thread.new do
+        receive { |message| process(message) }
+      end
+
+      thread.abort_on_exception = true
+
+      return thread
     end
   end # Daemon
 end # Oni
