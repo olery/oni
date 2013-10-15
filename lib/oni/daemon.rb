@@ -165,7 +165,7 @@ module Oni
         end
       end
 
-      #thread.abort_on_exception = true
+      thread.abort_on_exception = true
 
       return thread
     end
