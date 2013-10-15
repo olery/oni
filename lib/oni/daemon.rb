@@ -47,6 +47,8 @@ module Oni
       end
 
       workers.each(&:join)
+    rescue => error
+      error(error)
     end
 
     ##
