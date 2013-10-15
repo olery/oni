@@ -157,17 +157,20 @@ module Oni
     # @return [Thread]
     #
     def spawn_thread
-      thread = Thread.new do
-        begin
-          receive { |message| process(message) }
-        rescue => error
-          error(error)
-        end
-      end
+      thread = Thread.new { run_thread }
 
       thread.abort_on_exception = true
 
       return thread
+    end
+
+    ##
+    # The main code to execute in individual threads.
+    #
+    def run_thread
+      receive { |message| process(message) }
+    rescue => error
+      error(error)
     end
   end # Daemon
 end # Oni
