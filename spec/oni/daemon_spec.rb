@@ -110,4 +110,38 @@ describe Oni::Daemon do
     instance.message.should == {:number => 10}
     instance.output.should  == {:new_number => 20}
   end
+
+  context 'error handling' do
+    let :example_daemon do
+      Class.new(Oni::Daemon) do
+        set :threads, 1
+
+        def receive
+          yield 10
+        end
+      end
+    end
+
+    let :custom_error_daemon do
+      Class.new(example_daemon) do
+        set :threads, 1
+
+        def error(error)
+          raise 'custom error'
+        end
+      end
+    end
+
+    example 'should raise by default' do
+      daemon = example_daemon.new
+
+      lambda { daemon.start }.should raise_error(ArgumentError)
+    end
+
+    example 'allow custom error callbacks' do
+      daemon = custom_error_daemon.new
+
+      lambda { daemon.start }.should raise_error(RuntimeError, 'custom error')
+    end
+  end
 end

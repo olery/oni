@@ -115,12 +115,29 @@ module Oni
     end
 
     ##
+    # Called whenever an error is raised in the daemon, mapper or worker. By
+    # default this method just re-raises the error.
+    #
+    # Note that this callback method is called from a thread in which the
+    # exception occured, not from the main thread.
+    #
+    # @param [StandardError] error
+    #
+    def error(error)
+      raise error
+    end
+
+    ##
     # Creates a new mapper and passes it a set of arguments as defined in
     # {Oni::Daemon#mapper_arguments}.
     #
     # @return [Oni::Mapper]
     #
     def create_mapper
+      unless option(:mapper)
+        raise ArgumentError, 'No mapper has been set in the `:mapper` option'
+      end
+
       return option(:mapper).new(mapper_arguments)
     end
 
@@ -141,10 +158,14 @@ module Oni
     #
     def spawn_thread
       thread = Thread.new do
-        receive { |message| process(message) }
+        begin
+          receive { |message| process(message) }
+        rescue => error
+          error(error)
+        end
       end
 
-      thread.abort_on_exception = true
+      #thread.abort_on_exception = true
 
       return thread
     end
