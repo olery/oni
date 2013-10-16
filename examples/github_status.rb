@@ -14,7 +14,13 @@ module GithubStatus
   end
 
   class Worker < Oni::Worker
-    def process(url)
+    attr_reader :url
+
+    def initialize(url)
+      @url = url
+    end
+
+    def process
       uri_object   = URI.parse(url)
       http         = Net::HTTP.new(uri_object.host, uri_object.port)
       http.use_ssl = true
@@ -48,8 +54,10 @@ module GithubStatus
       end
     end
 
-    def complete(status)
-      puts "GitHub status: #{status}"
+    def complete(message, output, timings)
+      sec = timings.real.round(3)
+
+      puts "GitHub status: #{output}, retrieved in #{sec} seconds"
     end
   end # Daemon
 end # GithubStatus

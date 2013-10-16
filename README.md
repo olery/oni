@@ -129,8 +129,12 @@ Basic usage of Oni is as following:
     require 'oni'
 
     class MyWorker < Oni::Worker
-      def process(number)
-        return number * 2
+      def initialize(number)
+        @number = number
+      end
+
+      def process
+        return @number * 2
       end
     end
 
@@ -155,7 +159,7 @@ Basic usage of Oni is as following:
       end
 
       # This would get executed upon completion of a job.
-      def complete(result)
+      def complete(message, result, timings)
         puts result
       end
     end

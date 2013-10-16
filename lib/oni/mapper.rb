@@ -4,7 +4,6 @@ module Oni
   #
   class Mapper
     include Configurable
-    include InitializeArguments
 
     ##
     # Remaps the input of the daemon into a format that's easy to use for the

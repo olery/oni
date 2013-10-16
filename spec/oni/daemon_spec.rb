@@ -15,8 +15,12 @@ describe Oni::Daemon do
     end
 
     worker = Class.new(Oni::Worker) do
-      def process(number)
-        return number * 2
+      def initialize(number)
+        @number = number
+      end
+
+      def process
+        return @number * 2
       end
     end
 
@@ -82,13 +86,6 @@ describe Oni::Daemon do
 
     mapper.is_a?(Oni::Mapper).should == true
     mapper.number.nil?.should        == true
-  end
-
-  example 'create the mapper with a set of arguments' do
-    daemon = example_daemon.new
-    daemon.stub(:mapper_arguments).and_return(:number => 10)
-
-    daemon.create_mapper.number.should == 10
   end
 
   example 'start and stop the thread daemon' do

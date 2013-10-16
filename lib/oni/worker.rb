@@ -4,15 +4,14 @@ module Oni
   #
   class Worker
     include Configurable
-    include InitializeArguments
 
     ##
-    # Processes the given message and returns some kind of output.
+    # Runs the worker and returns some kind of output.
     #
-    # @param [Mixed] message
     # @return [Mixed]
+    # @raise [NotImplementedError]
     #
-    def process(message)
+    def process
       raise NotImplementedError, 'You must implement #process yourself'
     end
   end # Worker

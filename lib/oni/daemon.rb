@@ -97,8 +97,8 @@ module Oni
     def run_worker(message)
       mapper = create_mapper
       input  = mapper.map_input(message)
-      worker = option(:worker).new
-      output = worker.process(input)
+      worker = option(:worker).new(*input)
+      output = worker.process
 
       return mapper.map_output(output)
     end
@@ -152,17 +152,7 @@ module Oni
         raise ArgumentError, 'No mapper has been set in the `:mapper` option'
       end
 
-      return option(:mapper).new(mapper_arguments)
-    end
-
-    ##
-    # Returns the arguments to pass to the mapper as a Hash. By default this
-    # method returns an empty Hash.
-    #
-    # @return [Hash]
-    #
-    def mapper_arguments
-      return {}
+      return option(:mapper).new
     end
 
     ##
