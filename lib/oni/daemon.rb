@@ -83,6 +83,8 @@ module Oni
       end
 
       complete(message, output, timings)
+    rescue => error
+      error(error)
     end
 
     ##
