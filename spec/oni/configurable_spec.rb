@@ -13,6 +13,13 @@ describe Oni::Configurable do
     example_class.options[:number].should == 10
   end
 
+  example 'setting multiple options' do
+    example_class.set_multiple(:a => 10, :b => 20)
+
+    example_class.options[:a].should == 10
+    example_class.options[:b].should == 20
+  end
+
   example 'retrieve an option' do
     example_class.set(:number, 10)
 

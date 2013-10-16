@@ -88,6 +88,20 @@ module Oni
       def set(option, value)
         options[option.to_sym] = value
       end
+
+      ##
+      # Sets a number of options based on the given Hash.
+      #
+      # @example
+      #  set_multiple(:a => 10, :b => 20)
+      #
+      # @param [Hash] options
+      #
+      def set_multiple(options)
+        options.each do |option, value|
+          set(option, value)
+        end
+      end
     end # ClassMethods
   end # Configurable
 end # Oni
