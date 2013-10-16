@@ -83,8 +83,6 @@ module Oni
       end
 
       complete(message, output, timings)
-    rescue => error
-      error(error)
     end
 
     ##
@@ -171,10 +169,17 @@ module Oni
     ##
     # The main code to execute in individual threads.
     #
+    # If an error occurs in the receive method or processing a job the error
+    # handler is executed and the process is retried. It's the responsibility
+    # of the `error` method to determine if the process should fail only once
+    # (and fail hard) or if it should continue running.
+    #
     def run_thread
       receive { |message| process(message) }
     rescue => error
       error(error)
+
+      retry
     end
   end # Daemon
 end # Oni
