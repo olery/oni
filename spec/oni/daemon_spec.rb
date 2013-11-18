@@ -121,7 +121,7 @@ describe Oni::Daemon do
   context 'error handling' do
     let :example_daemon do
       Class.new(Oni::Daemon) do
-        set :threads, 1
+        set :threads, 0
 
         def receive
           yield 10
@@ -131,7 +131,7 @@ describe Oni::Daemon do
 
     let :custom_error_daemon do
       Class.new(example_daemon) do
-        set :threads, 1
+        set :threads, 0
 
         def error(error)
           raise 'custom error'

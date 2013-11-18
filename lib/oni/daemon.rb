@@ -42,11 +42,16 @@ module Oni
     def start
       before_start if respond_to?(:before_start)
 
-      threads.times do
-        workers << spawn_thread
-      end
+      # If we don't have any threads run in non threaded mode.
+      if threads > 0
+        threads.times do
+          workers << spawn_thread
+        end
 
-      workers.each(&:join)
+        workers.each(&:join)
+      else
+        run_thread
+      end
     rescue => error
       error(error)
     end
