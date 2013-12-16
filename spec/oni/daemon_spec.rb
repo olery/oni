@@ -22,6 +22,10 @@ describe Oni::Daemon do
       def process
         return @number * 2
       end
+
+      def extra_error_data
+        return @number
+      end
     end
 
     Class.new(Oni::Daemon) do
@@ -41,6 +45,10 @@ describe Oni::Daemon do
 
       def receive
         yield({:number => 10})
+      end
+
+      def error(error, extra_data = nil)
+        raise "#{error.message}: #{extra_data}"
       end
 
       def complete(message, output, timings)
@@ -133,7 +141,7 @@ describe Oni::Daemon do
       Class.new(example_daemon) do
         set :threads, 0
 
-        def error(error)
+        def error(error, extra_data = nil)
           raise 'custom error'
         end
       end
@@ -149,6 +157,18 @@ describe Oni::Daemon do
       daemon = custom_error_daemon.new
 
       lambda { daemon.start }.should raise_error(RuntimeError, 'custom error')
+    end
+  end
+
+  context 'error handling with extra data' do
+    example 'include the extra data' do
+      instance = example_daemon.new
+
+      instance.option(:worker).any_instance.stub(:process) { raise 'example' }
+
+      block = lambda { instance.run_worker(:number => 10) }
+
+      block.should raise_error(RuntimeError, 'example: 10')
     end
   end
 end

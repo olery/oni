@@ -101,7 +101,12 @@ module Oni
       mapper = create_mapper
       input  = mapper.map_input(message)
       worker = option(:worker).new(*input)
-      output = worker.process
+
+      begin
+        output = worker.process
+      rescue => error
+        error(error, worker.extra_error_data)
+      end
 
       return mapper.map_output(output)
     end
@@ -139,8 +144,9 @@ module Oni
     # exception occured, not from the main thread.
     #
     # @param [StandardError] error
+    # @param [Mixed] extra_data Extra data made available to the method.
     #
-    def error(error)
+    def error(error, extra_data = nil)
       raise error
     end
 
