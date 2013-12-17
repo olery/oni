@@ -18,7 +18,7 @@ module Oni
     #
     # @param [StandardError] error
     # @param [Mixed] parameters
-    # @return [FeedbackDaemon::WorkerError]
+    # @return [Oni::WrappedError]
     #
     def self.from(error, parameters = nil)
       return new(
