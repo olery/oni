@@ -87,16 +87,12 @@ module Oni
         output = run_worker(message)
       end
 
-      complete(message, output, timings) unless output == false
+      complete(message, output, timings)
     end
 
     ##
     # Maps the input, runs the worker and then maps the output into something
     # that the daemon can understand.
-    #
-    # If the worker's `process` method raises an error `false` is returned and
-    # the `complete` callback is skipped, otherwise the remapped output is
-    # returned.
     #
     # @param [Mixed] message
     # @return [Mixed]
@@ -105,15 +101,9 @@ module Oni
       mapper = create_mapper
       input  = mapper.map_input(message)
       worker = option(:worker).new(*input)
-      output = false
+      output = worker.process
 
-      begin
-        output = mapper.map_output(worker.process)
-      rescue => error
-        error(error, worker.extra_error_data)
-      end
-
-      return output
+      return mapper.map_output(output)
     end
 
     ##
@@ -145,13 +135,9 @@ module Oni
     # Called whenever an error is raised in the daemon, mapper or worker. By
     # default this method just re-raises the error.
     #
-    # Note that this callback method is called from a thread in which the
-    # exception occured, not from the main thread.
-    #
     # @param [StandardError] error
-    # @param [Mixed] extra_data Extra data made available to the method.
     #
-    def error(error, extra_data = nil)
+    def error(error)
       raise error
     end
 
