@@ -1,6 +1,11 @@
 # @title Changelog
 # Changelog
 
+## 3.1.0 - December 17th, 2013
+
+Added the `Oni::WrappedError` class that can be used to wrap existing error
+classes within workers.
+
 ## 3.0.0 - December 17th, 2013
 
 This release reverts the changes of version 2.0.0 and 2.0.1 as they proved to
