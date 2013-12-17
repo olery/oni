@@ -1,6 +1,11 @@
 # @title Changelog
 # Changelog
 
+## 3.0.0 - December 17th, 2013
+
+This release reverts the changes of version 2.0.0 and 2.0.1 as they proved to
+be too problematic.
+
 ## 2.0.1 - December 17th, 2013
 
 * Fixed a bug where the complete() callback would be executed upon worker
