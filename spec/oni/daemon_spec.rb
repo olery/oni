@@ -170,5 +170,19 @@ describe Oni::Daemon do
 
       block.should raise_error(RuntimeError, 'example: 10')
     end
+
+    example 'skip the complete() callback upon failure' do
+      instance = example_daemon.new
+
+      instance.option(:worker).any_instance.stub(:process) { raise 'boom' }
+
+      block = lambda { instance.process(:number => 10) }
+
+      # The complete() callback should be skipped.
+      instance.should_not receive(:complete)
+
+      # Regular error handling should *not* be skipped.
+      block.should raise_error(RuntimeError, 'boom: 10')
+    end
   end
 end
