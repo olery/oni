@@ -124,25 +124,8 @@ Basic usage of Oni is as following:
 
     require 'oni'
 
-    class MyWorker < Oni::Worker
-      def initialize(number)
-        @number = number
-      end
-
-      def process
-        return @number * 2
-      end
-    end
-
-    class MyMapper < Oni::Mapper
-      def map_input(input)
-        return input[:number]
-      end
-
-      def map_output(output)
-        return {:number => output, :completed => Time.now}
-      end
-    end
+    # This example defines 3 classes: MyDaemon, MyMapper and MyWorker.
+    # Combined they form the basic structure of an Oni Daemon.
 
     class MyDaemon < Oni::Daemon
       set :mapper, MyMapper
@@ -157,6 +140,35 @@ Basic usage of Oni is as following:
       # This would get executed upon completion of a job.
       def complete(message, result, timings)
         puts result
+      end
+    end
+
+    class MyMapper < Oni::Mapper
+      # Map the input given by MyDaemon#receive into the right arguments
+      # for MyWorker#initialize. 
+      #
+      # NOTE: the return value should be an Array. 
+      # Oni calls #to_a on the output (more specifically we use a splat) so your 
+      # return value should be an Array. If you do not return an Array you risk
+      # that the object you return will wrongfully be converted into an Array.
+      # This is painful when it comes to Hashes, which, after the #to_a call
+      # will be converted into arrays of values in stead of your intended hash.
+      def map_input(input)
+        return [input[:number]]
+      end
+
+      def map_output(output)
+        return {:number => output, :completed => Time.now}
+      end
+    end
+
+    class MyWorker < Oni::Worker
+      def initialize(number)
+        @number = number
+      end
+
+      def process
+        return @number * 2
       end
     end
 
