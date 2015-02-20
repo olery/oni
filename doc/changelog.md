@@ -1,6 +1,11 @@
 # @title Changelog
 # Changelog
 
+## 3.1.1 - February 20th, 2015
+
+Oni now depends on version 1 of the AWS SDK (`aws-sdk-v1`) due to the `aws-sdk`
+now installing version 2 (which is not compatible).
+
 ## 3.1.0 - December 17th, 2013
 
 Added the `Oni::WrappedError` class that can be used to wrap existing error
