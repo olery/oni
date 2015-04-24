@@ -25,7 +25,7 @@ describe Oni::Daemon do
     end
 
     Class.new(Oni::Daemon) do
-      attr_reader :number, :number2, :message, :output, :timings
+      attr_reader :number, :number2, :message, :output
 
       set :mapper, mapper
       set :worker, worker
@@ -47,10 +47,9 @@ describe Oni::Daemon do
         raise "#{error.message}: #{extra_data}"
       end
 
-      def complete(message, output, timings)
+      def complete(message, output)
         @message = message
         @output  = output
-        @timings = timings
       end
     end
   end
@@ -111,15 +110,6 @@ describe Oni::Daemon do
 
     instance.message.should == {:number => 10}
     instance.output.should  == {:new_number => 20}
-  end
-
-  example 'measure the execution time' do
-    instance = example_daemon.new
-
-    instance.start
-    instance.stop
-
-    instance.timings.is_a?(Benchmark::Tms).should == true
   end
 
   context 'error handling' do

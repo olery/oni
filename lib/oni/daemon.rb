@@ -82,12 +82,9 @@ module Oni
     # @param [Mixed] message
     #
     def process(message)
-      output  = nil
-      timings = Benchmark.measure do
-        output = run_worker(message)
-      end
+      output = run_worker(message)
 
-      complete(message, output, timings)
+      complete(message, output)
     end
 
     ##
@@ -117,18 +114,15 @@ module Oni
 
     ##
     # Called when a job has been completed, by default this method is a noop.
-    # This method is passed 3 arguments:
+    # This method is passed 2 arguments:
     #
     # 1. The raw input message.
     # 2. The output of the worker (remapped by the mapper).
-    # 3. A Benchmark::Tms instance that contains the timings for processing the
-    #    message.
     #
     # @param [Mixed] message The raw input message (e.g. an AWS SQS message)
     # @param [Mixed] output The output of the worker.
-    # @param [Benchmark::Tms] timings
     #
-    def complete(message, output, timings)
+    def complete(message, output)
     end
 
     ##

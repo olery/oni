@@ -54,10 +54,8 @@ module GithubStatus
       end
     end
 
-    def complete(message, output, timings)
-      sec = timings.real.round(3)
-
-      puts "GitHub status: #{output}, retrieved in #{sec} seconds"
+    def complete(message, output)
+      puts "GitHub status: #{output}"
     end
   end # Daemon
 end # GithubStatus
