@@ -1,4 +1,4 @@
-require 'aws-sdk-v1'
+require 'aws-sdk'
 
 module Oni
   module Daemons
@@ -49,13 +49,21 @@ module Oni
       ##
       # Returns the queue to use for the current thread.
       #
-      # @return [AWS::SQS::Queue]
+      # @return [Aws::SQS::QueuePoller]
       #
-      #:nocov:
       def queue
-        return AWS::SQS.new.queues.named(option(:queue_name))
+        return Aws::SQS::QueuePoller.new(queue_url)
       end
-      #:nocov:
+
+      ##
+      # @return [String]
+      #
+      def queue_url
+        sqs      = Aws::SQS::Client.new
+        response = sqs.get_queue_url(:queue_name => option(:queue_name))
+
+        return response.queue_url
+      end
     end # SQS
   end # Daemons
 end # Oni

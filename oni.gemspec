@@ -15,9 +15,14 @@ Gem::Specification.new do |gem|
 
   gem.required_ruby_version = '>= 1.9.3'
 
-  gem.files       = `git ls-files`.split("\n").sort
-  gem.executables = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
-  gem.test_files  = gem.files.grep(%r{^(test|spec|features)/})
+  gem.files = Dir.glob([
+    'doc/**/*',
+    'lib/**/*.rb',
+    'README.md',
+    'LICENSE',
+    'oni.gemspec',
+    '.yardopts'
+  ]).select { |file| File.file?(file) }
 
   gem.add_development_dependency 'rake'
   gem.add_development_dependency 'bundler'
@@ -25,5 +30,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'yard'
   gem.add_development_dependency 'simplecov'
   gem.add_development_dependency 'kramdown'
-  gem.add_development_dependency 'aws-sdk-v1'
+  gem.add_development_dependency 'aws-sdk', '~> 2.0'
 end
