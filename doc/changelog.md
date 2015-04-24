@@ -1,6 +1,11 @@
 # @title Changelog
 # Changelog
 
+## 4.0.0 - April 24th, 2015
+
+Oni now depends on V2 of the AWS SDK and no longer sends any benchmarking
+details to `Daemon#complete`.
+
 ## 3.1.1 - February 20th, 2015
 
 Oni now depends on version 1 of the AWS SDK (`aws-sdk-v1`) due to the `aws-sdk`
