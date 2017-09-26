@@ -1,4 +1,5 @@
 require 'thread'
+require 'timeout'
 
 require_relative 'oni/version'
 require_relative 'oni/configurable'

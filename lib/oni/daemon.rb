@@ -23,6 +23,13 @@ module Oni
     DEFAULT_THREAD_AMOUNT = 5
 
     ##
+    # The default amount of threads to start.
+    #
+    # @return [Fixnum]
+    #
+    DEFAULT_WORKER_TIMEOUT = nil
+
+    ##
     # Creates a new instance of the class and calls `#after_initialize` if it
     # is defined.
     #
@@ -42,13 +49,14 @@ module Oni
     def start
       before_start if respond_to?(:before_start)
 
-      # If we don't have any threads run in non threaded mode.
       if threads > 0
         threads.times do
           workers << spawn_thread
         end
 
         workers.each(&:join)
+
+      # If we don't have any threads run in non threaded mode.
       else
         run_thread
       end
@@ -76,6 +84,15 @@ module Oni
     end
 
     ##
+    # Returns the amount of threads to use.
+    #
+    # @return [Fixnum]
+    #
+    def worker_timeout
+      option :worker_timeout, DEFAULT_WORKER_TIMEOUT
+    end
+
+    ##
     # Processes the given message. Upon completion the `#complete` method is
     # called and passed the resulting output.
     #
@@ -98,9 +115,11 @@ module Oni
       mapper = create_mapper
       input  = mapper.map_input(message)
       worker = option(:worker).new(*input)
-      output = worker.process
+      output = Timeout.timeout worker_timeout do
+        worker.process
+      end
 
-      return mapper.map_output(output)
+      mapper.map_output output
     end
 
     ##
@@ -171,7 +190,9 @@ module Oni
     # (and fail hard) or if it should continue running.
     #
     def run_thread
-      receive { |message| process(message) }
+      receive do |message|
+        process message
+      end
     rescue => error
       error(error)
 
