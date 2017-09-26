@@ -101,7 +101,9 @@ module Oni
       mapper = create_mapper
       input  = mapper.map_input(message)
       worker = option(:worker).new(*input)
-      output = worker.process
+      output = Timeout.timeout option :worker_timeout do
+        worker.process
+      end
 
       return mapper.map_output(output)
     end

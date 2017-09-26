@@ -1,4 +1,14 @@
-coverage
-yardoc
+# package
 pkg
-Gemfile.lock
+*.gem
+
+# tests
+coverage
+
+# docs
+yardoc
+
+# editors
+*.swp
+*~
+
