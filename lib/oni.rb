@@ -1,6 +1,8 @@
 require 'thread'
 require 'timeout'
 
+require 'aws-sdk'
+
 require_relative 'oni/version'
 require_relative 'oni/configurable'
 require_relative 'oni/mapper'
