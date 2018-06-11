@@ -35,6 +35,8 @@ module Oni
         poll_options.merge! max_number_of_messages: 10
 
         queue.poll poll_options do |messages|
+          next yield messages unless messages.is_a? Array
+
           messages.each do |message|
             yield message
           end
