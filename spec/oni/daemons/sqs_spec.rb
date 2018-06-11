@@ -17,8 +17,12 @@ describe Oni::Daemons::SQS do
 
     instance = example_daemon.new
     queue    = Class.new do
-      def poll(options = {})
-        yield 10
+      def poll options = {}
+        if options[:max_number_of_messages] and options[:max_number_of_messages] > 1
+          yield [1,2,3]
+        else
+          yield [10]
+        end
       end
     end
 

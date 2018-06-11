@@ -20,6 +20,7 @@ module Oni
     #   information on the available options.
     #
     class SQS < Daemon
+
       ##
       # Checks if the `queue_name` option is set.
       #
@@ -31,8 +32,12 @@ module Oni
       # Polls an SQS queue for a message and processes it.
       #
       def receive
-        queue.poll(poll_options) do |message|
-          yield message
+        poll_options.merge! max_number_of_messages: 10
+
+        queue.poll poll_options do |messages|
+          messages.each do |message|
+            yield message
+          end
         end
       end
 
