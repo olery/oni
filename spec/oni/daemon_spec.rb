@@ -95,11 +95,11 @@ describe Oni::Daemon do
     instance = example_daemon.new
     instance.start
 
-    instance.workers.length.should == instance.threads
+    instance.daemon_workers.values.flatten.length.should == instance.threads
 
     instance.stop
 
-    instance.workers.length.should == 0
+    instance.daemon_workers.values.flatten.length.should == 0
   end
 
   example 'process a job' do

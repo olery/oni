@@ -13,7 +13,14 @@ module Oni
   class Daemon
     include Configurable
 
-    attr_reader :workers
+    attr_reader :daemon_workers
+
+    ##
+    # The default amount of worker to start.
+    #
+    # @return [Fixnum]
+    #
+    DEFAULT_WORKER_AMOUNT = 1
 
     ##
     # The default amount of threads to start.
@@ -34,7 +41,7 @@ module Oni
     # is defined.
     #
     def initialize
-      @workers = []
+      @daemon_workers = {}
 
       after_initialize if respond_to?(:after_initialize)
     end
@@ -50,14 +57,13 @@ module Oni
       before_start if respond_to?(:before_start)
 
       if threads > 0
-        threads.times do
-          workers << spawn_thread
+        if workers > 1
+          workers.times{ |i| fork{ spawn_worker i } }
+          Process.waitall
+        else
+          spawn_worker
         end
-
-        workers.each(&:join)
-
-      # If we don't have any threads run in non threaded mode.
-      else
+      else # If we don't have any threads run in non threaded mode.
         run_thread
       end
     rescue => error
@@ -70,8 +76,14 @@ module Oni
     # be shut down *immediately*.
     #
     def stop
-      workers.each(&:kill)
-      workers.clear
+      daemon_workers.each do |pid, worker_threads|
+        worker_threads.each(&:kill)
+        worker_threads.clear
+      end
+    end
+
+    def workers
+      option :workers, DEFAULT_WORKER_AMOUNT
     end
 
     ##
@@ -80,7 +92,7 @@ module Oni
     # @return [Fixnum]
     #
     def threads
-      return option(:threads, DEFAULT_THREAD_AMOUNT)
+      option :threads, DEFAULT_THREAD_AMOUNT
     end
 
     ##
@@ -173,6 +185,19 @@ module Oni
     #
     # @return [Thread]
     #
+    def spawn_worker i = nil
+      Process.setproctitle "#{$0}: worker #{i}" if i
+
+      daemon_workers[Process.pid] = Array.new threads do
+        spawn_thread
+      end.each(&:join)
+    end
+
+    ##
+    # Spawns a new thread that waits for daemon input.
+    #
+    # @return [Thread]
+    #
     def spawn_thread
       thread = Thread.new { run_thread }
 
@@ -198,5 +223,6 @@ module Oni
 
       retry
     end
-  end # Daemon
-end # Oni
+
+  end
+end

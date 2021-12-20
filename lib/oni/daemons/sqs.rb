@@ -71,6 +71,7 @@ module Oni
 
         return response.queue_url
       end
-    end # SQS
-  end # Daemons
-end # Oni
+
+    end
+  end
+end

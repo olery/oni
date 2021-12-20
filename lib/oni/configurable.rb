@@ -38,12 +38,9 @@ module Oni
     #
     def option(name, default = nil)
       value = self.class.options[name.to_sym]
+      value = default if default and !value
 
-      if default and !value
-        value = default
-      end
-
-      return value.respond_to?(:call) ? value.call : value
+      if value.respond_to? :call then value.call else value end
     end
 
     ##
@@ -102,6 +99,7 @@ module Oni
           set(option, value)
         end
       end
-    end # ClassMethods
-  end # Configurable
-end # Oni
+
+    end
+  end
+end

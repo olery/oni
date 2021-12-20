@@ -10,7 +10,6 @@ Gem::Specification.new do |gem|
 
   gem.summary     = 'Framework for building concurrent daemons in Ruby.'
   gem.description = gem.summary
-  gem.has_rdoc    = 'yard'
   gem.license     = 'MIT'
 
   gem.required_ruby_version = '>= 1.9.3'
@@ -30,5 +29,6 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'yard'
   gem.add_development_dependency 'simplecov'
   gem.add_development_dependency 'kramdown'
+  gem.add_development_dependency 'pry'
   gem.add_development_dependency 'aws-sdk', '~> 2.0'
 end
