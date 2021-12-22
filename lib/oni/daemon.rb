@@ -56,16 +56,14 @@ module Oni
     def start
       before_start if respond_to?(:before_start)
 
-      if threads > 0
-        if workers > 1
-          workers.times{ |i| fork{ spawn_worker i } }
-          Process.waitall
-        else
-          spawn_worker
+      return run_thread   if threads <= 1
+      return spawn_worker if workers <= 1
+
+      Array.new workers do |i|
+        Thread.new do
+          Process.wait fork{ spawn_worker i+1 } while true
         end
-      else # If we don't have any threads run in non threaded mode.
-        run_thread
-      end
+      end.each(&:join)
     rescue => error
       error(error)
     end
