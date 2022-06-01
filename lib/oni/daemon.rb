@@ -59,13 +59,16 @@ module Oni
       return run_thread   if threads <= 1
       return spawn_worker if workers <= 1
 
-      Array.new workers do |i|
+      threads = Array.new workers do |i|
         Thread.new do
           Process.wait fork{ spawn_worker i+1 } while true
         end
-      end.each(&:join)
+      end
 
+      sleep 3
       after_start if respond_to? :after_start
+
+      threads.each(&:join)
     rescue => error
       error(error)
     end
