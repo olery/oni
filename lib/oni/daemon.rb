@@ -54,7 +54,7 @@ module Oni
     # before starting the daemon.
     #
     def start
-      before_start if respond_to?(:before_start)
+      before_start if respond_to? :before_start
 
       return run_thread   if threads <= 1
       return spawn_worker if workers <= 1
@@ -64,6 +64,8 @@ module Oni
           Process.wait fork{ spawn_worker i+1 } while true
         end
       end.each(&:join)
+
+      after_start if respond_to? :after_start
     rescue => error
       error(error)
     end
