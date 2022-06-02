@@ -58,7 +58,7 @@ module Oni
 
       wthreads = if threads <= 1    then [run_thread]
                  elsif workers <= 1 then standard_worker
-                 else wthreads = Array.new(workers).map{ |i| spawn_worker i } end
+                 else wthreads = Array.new(workers){ |i| spawn_worker i } end
 
       after_start if respond_to? :after_start
 
@@ -79,6 +79,7 @@ module Oni
         worker_threads.each(&:kill)
         worker_threads.clear
       end
+      exit
     end
 
     def workers
@@ -184,21 +185,24 @@ module Oni
     #
     # @return [Thread]
     #
-    def spawn_worker i = nil, &block
+    def spawn_worker name = nil, &block
       Thread.new do
+        pid = nil
         loop do # keep restarting for OOM and other cases
           pid = fork do
-            Process.setproctitle "#{$0}: worker #{i}" if i
+            Process.setproctitle "#{$0}: worker #{name}" if name
 
             if block then yield else standard_worker end
           end
           Process.wait pid
         end
+      ensure
+        Process.kill :KILL, pid
       end
     end
 
     def standard_worker
-      Array.new(threads).map do
+      Array.new(threads) do
         spawn_thread.tap{ |t| daemon_workers[Process.pid] << t }
       end.each(&:join)
     end
