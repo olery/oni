@@ -41,7 +41,7 @@ module Oni
     # is defined.
     #
     def initialize
-      @daemon_workers = {}
+      @daemon_workers = Hash.new{ |h, k| h[k] = [] }
 
       after_initialize if respond_to?(:after_initialize)
     end
@@ -56,19 +56,15 @@ module Oni
     def start
       before_start if respond_to? :before_start
 
-      return run_thread   if threads <= 1
-      return spawn_worker if workers <= 1
+      wthreads = if threads <= 1    then [run_thread]
+                 elsif workers <= 1 then standard_worker
+                 else wthreads = Array.new(workers).map{ |i| spawn_worker i } end
 
-      threads = Array.new workers do |i|
-        Thread.new do
-          Process.wait fork{ spawn_worker i+1 } while true
-        end
-      end
-
-      sleep 3
       after_start if respond_to? :after_start
 
-      threads.each(&:join)
+      %i[INT TERM].each{ |sig| trap(sig){ stop } }
+      wthreads.each(&:join) if workers > 1
+
     rescue => error
       error(error)
     end
@@ -188,11 +184,22 @@ module Oni
     #
     # @return [Thread]
     #
-    def spawn_worker i = nil
-      Process.setproctitle "#{$0}: worker #{i}" if i
+    def spawn_worker i = nil, &block
+      Thread.new do
+        loop do # keep restarting for OOM and other cases
+          pid = fork do
+            Process.setproctitle "#{$0}: worker #{i}" if i
 
-      daemon_workers[Process.pid] = Array.new threads do
-        spawn_thread
+            if block then yield else standard_worker end
+          end
+          Process.wait pid
+        end
+      end
+    end
+
+    def standard_worker
+      Array.new(threads).map do
+        spawn_thread.tap{ |t| daemon_workers[Process.pid] << t }
       end.each(&:join)
     end
 
@@ -202,11 +209,9 @@ module Oni
     # @return [Thread]
     #
     def spawn_thread
-      thread = Thread.new { run_thread }
-
-      thread.abort_on_exception = true
-
-      return thread
+      Thread.new{ run_thread }.tap do |t|
+        t.abort_on_exception = true
+      end
     end
 
     ##
