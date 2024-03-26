@@ -30,5 +30,6 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'simplecov'
   gem.add_development_dependency 'kramdown'
   gem.add_development_dependency 'pry'
-  gem.add_development_dependency 'aws-sdk', '~> 2.0'
+
+  gem.add_dependency 'aws-sdk-sqs', '~> 1.0'
 end
