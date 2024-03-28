@@ -31,5 +31,6 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'kramdown'
   gem.add_development_dependency 'pry'
 
+  gem.add_dependency 'rexml' # needed by aws-sdk
   gem.add_dependency 'aws-sdk-sqs', '~> 1.0'
 end
